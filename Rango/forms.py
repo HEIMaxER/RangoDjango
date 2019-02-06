@@ -13,21 +13,20 @@ class CategoryForm(forms.ModelForm):
 
 class PageForm(forms.ModelForm):
 
-    def __init__(self, category_slug):
-        category =  forms.CharField(widget=forms.HiddenInput(), initial=category_slug)
-        title = forms.CharField(max_length=128, help_text="Please enter the title of the page.")
-        url = forms.URLField(max_length=200, help_text="Please enter the URL of the page.")
-        views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+
+    title = forms.CharField(max_length=128, help_text="Please enter the title of the page.")
+    url = forms.URLField(max_length=200, help_text="Please enter the URL of the page.")
+    views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
     class Meta:
         model = Page
-        fields = ('title', 'url', )
+        exclude = ('category',)
 
     def clean(self):
         cleaned_data = self.cleaned_data
 
         url = cleaned_data.get('url')
-        if url and not url.startswith('http://'):
+        if url and not url.startswith('http://') and not url.startswith('https://'):
             url = 'http://' + url
             cleaned_data['url'] = url
             return cleaned_data

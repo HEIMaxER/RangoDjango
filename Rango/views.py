@@ -11,10 +11,13 @@ def index(request):
     category_list = Category.objects.order_by('-likes')[:5]
     page_list = Page.objects.order_by('-views')[:5]
     context_dict = {'categories': category_list, 'pages': page_list}
-    return render(request, 'rango/index.html', context=context_dict)
+    return render(request, 'Rango/index.html', context=context_dict)
 
 def about(request):
-    return render(request, 'rango/about.html')
+    return render(request, 'Rango/about.html')
+
+def base(request):
+    return render(request, 'Rango/base.html')
 
 def show_category(request, category_name_slug):
     context_dict = {}
@@ -27,7 +30,7 @@ def show_category(request, category_name_slug):
         context_dict['category'] = None
         context_dict['pages'] = None
 
-    return render(request, 'rango/category.html', context_dict)
+    return render(request, 'Rango/category.html', context_dict)
 
 def add_category(request):
     form = CategoryForm()
@@ -39,18 +42,17 @@ def add_category(request):
         else:
             print(form.errors)
 
-    return render(request, 'rango/add_category.html', {'form': form})
+    return render(request, 'Rango/add_category.html', {'form': form})
 
 def add_page(request, category_name_slug):
-    context_dict = {}
+
     try:
         category = Category.objects.get(slug=category_name_slug)
     except Category.DoesNotExist:
         category = None
-    context_dict['category'] = category
-    form = PageForm(category_name_slug)
+    form = PageForm()
     if request.method == 'POST':
-        form = CategoryForm(request.POST)
+        form = PageForm(request.POST)
         if form.is_valid():
             if category:
                 page = form.save(commit=False)
@@ -61,6 +63,6 @@ def add_page(request, category_name_slug):
                 return show_category(request, category_name_slug)
         else:
             print(form.errors)
-    context_dict['form'] = form
+    context_dict = {'form':form, 'category': category}
 
-    return render(request, 'rango/add_page.html', context_dict)
+    return render(request, 'Rango/add_page.html', context_dict)

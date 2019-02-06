@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+{% extends 'Rango/base.html' %}
+{% load staticfiles %}
+
+{% block body_block %}
+
+    <h1>Rango says...</h1>
+    <div>hey there partner! <div/>
+    <h1>Here are our top 5 categories :</h1>
+    <div>
+        {% if categories %}
+
+                {% for category in categories %}
+                    <li>
+                        <a href="{% url 'Rango:show_category' category.slug %}">{{ category.name }}</a>
+                    <li/>
+                {% endfor %}
+
+        {% else %}
+            <strong>There are no categories present.</strong>
+        {% endif %}
+    <h1> Here are our top 5 pages : </h1>
+    <div>
+        {% if pages %}
+
+                {% for page in pages %}
+                    <li>
+                        <a href="{{page.url }}">{{ page.title }}</a>
+                    <li/>
+                {% endfor %}
+
+        {% else %}
+            <strong>There are no pages present.</strong>
+        {% endif %}
+    <div/>
+
+{% endblock %}
