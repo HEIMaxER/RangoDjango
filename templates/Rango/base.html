@@ -4,6 +4,11 @@
 <html>
     <head lang="en">
         <meta charset="UTF-8" />
+        {% if user.is_authenticated %}
+            howdy {{ user.username }}!
+        {% else %}
+            hey there partner!
+        {% endif %}
         <title>
             Rango -
             {% block title_block %}
@@ -25,6 +30,13 @@
         <hr />
         <div>
             <ul>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'Rango:restricted' %}">Restricted Page</a></li>
+                    <li><a href="{% url 'Rango:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'Rango:login' %}">Sign In</a></li>
+                    <li><a href="{% url 'Rango:register' %}">Sign Up</a></li>
+                {% endif %}
                 <li><a href="{% url 'Rango:add_category' %}">Add New Category</a></li>
                 <li><a href="{% url 'Rango:about' %}">About</a></li>
                 <li><a href="{% url 'Rango:index' %}">Index</a></li>
