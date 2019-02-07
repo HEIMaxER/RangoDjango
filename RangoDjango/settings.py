@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Rango',
+    'registration',
 ]
 
 MIDDLEWARE = [
@@ -138,6 +139,15 @@ MEDIA_URL = '/media/'
 
 STATIC_URL = '/static/'
 
-LOGIN_URL = '/Rango/login/'
+LOGIN_URL = '/accounts/login/'
 
+REGISTRATION_OPEN = True
+
+ACCOUNT_ACTIVATION_DAYS = 7
+
+REGISTRATION_AUTO_LOGIN = True
+
+LOGIN_REDIRECT_URL = '/Rango/'
+
+LOGIN_URL = '/accounts/login/'
 

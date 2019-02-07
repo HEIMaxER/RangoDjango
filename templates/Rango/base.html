@@ -31,13 +31,14 @@
         <div>
             <ul>
                 {% if user.is_authenticated %}
+                    <li><a href="{% url 'Rango:add_category' %}">Add New Category</a></li>
                     <li><a href="{% url 'Rango:restricted' %}">Restricted Page</a></li>
-                    <li><a href="{% url 'Rango:logout' %}">Logout</a></li>
+                    <li><a href="{% url 'auth_password_change' %}">Change Password</a></li>
+                    <li><a href="{% url 'auth_logout'%}?next=/Rango/"> Logout</li>
                 {% else %}
-                    <li><a href="{% url 'Rango:login' %}">Sign In</a></li>
-                    <li><a href="{% url 'Rango:register' %}">Sign Up</a></li>
+                    <a href="{% url 'auth_login' %}">Sign In</a></li>
+                    <li><a href="{% url 'registration_register' %}">Sign Up</a></li>
                 {% endif %}
-                <li><a href="{% url 'Rango:add_category' %}">Add New Category</a></li>
                 <li><a href="{% url 'Rango:about' %}">About</a></li>
                 <li><a href="{% url 'Rango:index' %}">Index</a></li>
             </ul>
