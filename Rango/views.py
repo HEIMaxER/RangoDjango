@@ -3,13 +3,15 @@ from __future__ import unicode_literals
 #from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.shortcuts import render
 from .models import Category, Page
 from Rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
+from bing_search import run_query
+
 
 
 def get_server_side_cookie(request, cookie, default_val=None):
@@ -172,3 +174,23 @@ def user_logout(request):
 # Take the user back to the homepage.
     return HttpResponseRedirect(reverse('index'))
 """
+
+def search(request):
+    query = None
+    result_list = []
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+    if query:
+        result_list = run_query(query)
+    return render(request, 'Rango/search.html', {'result_list': result_list})
+
+def track_url(request):
+    page_id = None
+    if request.method == 'GET':
+        if 'page_id' in request.GET:
+            page_id = request.GET['page_id']
+    page = Page.objects.get(pk=page_id)
+    page.views += 1
+    page.save()
+    return redirect(page.url)
+

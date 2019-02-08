@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<!--
+
 {% load staticfiles %}
 {% load Rango_template_tags %}
 <html>
@@ -20,14 +20,14 @@
     </head>
     <body>
         <div>
-
+            {% block sidebar_block %}
                 {% get_category_list category %}
-
+            {% endblock %}
         </div>
         <div>
-
+            {% block body_block %}
                 well I guess this page isn't important enough to be filled
-
+            {% endblock %}
         </div>
         <hr />
         <div>
@@ -47,11 +47,11 @@
         </div>
      </body>
     <div>
-
+        <img src="{% static "images/Lenna.png" %}" alt="Picture of Lenna" width="804" height="200"/><br />
     </div>
 </html>
--->
 
+<!--
 {% load staticfiles %}
 {% load Rango_template_tags %}
 <html lang="en">
@@ -66,9 +66,9 @@
             Rango - {% block title %}How to Tango with Django!{% endblock %}
         </title>
 
-        <link href="{% static "css/bootstrap_min.css" %}" rel="stylesheet">
+        <link href="http://v4-alpha.getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
+        <link href="http://v4-alpha.getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
     </head>
     <body>
         <nav class="navbar navbar-dark navbar-fixed-top bg-inverse">
@@ -79,12 +79,13 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="#">Rango</a>
-            <nav id="navbar">
+            <div id="navbar">
                 <nav class="nav navbar-nav pull-xs-left">
                     <a class="nav-item nav-link" href="{% url 'Rango:index' %}">Home</a>
                     <a class="nav-item nav-link" href="{% url 'Rango:about' %}">About</a>
-                    <a class="nav-item nav-link" href="{% url 'Rango:restricted' %}">Search</a>
+                    <a class="nav-item nav-link" href="{% url 'Rango:search' %}">Search</a>
                     {% if user.is_authenticated %}
+                        <a class="nav-item nav-link" href="{% url 'Rango:restricted' %}">Restricted</a>
                         <a class="nav-item nav-link" href="{% url 'Rango:add_category' %}"> Add a New Category</a>
                         <a class="nav-item nav-link" href="{% url 'auth_logout' %}?next=/Rango/">Logout</a>
                     {% else %}
@@ -92,23 +93,25 @@
                         <a class="nav-item nav-link" href="{% url 'auth_login' %}">Login</a>
                     {% endif %}
                 </nav>
-            </nav>
+            </div>
         </nav>
         <div class="container-fluid">
             <div class="row">
-                <nav class="col-sm-3 col-md-2 sidebar">
-                    {% block sidebar_block %}
+                <div class="col-sm-3 col-md-2 sidebar">
+
                         {% get_category_list category %}
-                    {% endblock %}
-                </nav>
+
+                </div>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                    {% block body_block %}{% endblock %}
+
                 </div>
             </div>
         </div>
-        <img src="{% static "images/Lenna.png" %}" alt="Picture of Lenna" width="804" height="200"/><br />
-        <script src="{% static "javascript/jquery.js" %}"> </script>
+        <script src="https://npmcdn.com/tether@1.2.4/dist/js/tether.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"> </script>
         <script src="http://v4-alpha.getbootstrap.com/dist/js/bootstrap.min.js"> </script>
         <script src="http://v4-alpha.getbootstrap.com/assets/js/ie10-viewport-bug-workaround.j\s"> </script>
     </body>
 </html>
+
+-->
