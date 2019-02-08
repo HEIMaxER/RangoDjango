@@ -33,6 +33,9 @@
         <div>
             <ul>
                 {% if user.is_authenticated %}
+                    <li><a href="{% url 'Rango:profile' user.username %}">Profile</a></li>
+                    <li><a href="{% url 'Rango:list_profiles' %}">List Profiles</a></li>
+                    <li><a class="nav-item nav-link" href="{% url 'Rango:search' %}">Search</a></li>
                     <li><a href="{% url 'Rango:add_category' %}">Add New Category</a></li>
                     <li><a href="{% url 'Rango:restricted' %}">Restricted Page</a></li>
                     <li><a href="{% url 'auth_password_change' %}">Change Password</a></li>

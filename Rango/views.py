@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import Category, Page
+from .models import Category, Page, User, UserProfile
 from Rango.forms import CategoryForm, PageForm, UserForm, UserProfileForm
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
@@ -194,3 +194,45 @@ def track_url(request):
     page.save()
     return redirect(page.url)
 
+@login_required
+def register_profile(request):
+    form = UserProfileForm()
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES)
+    if form.is_valid():
+        user_profile = form.save(commit=False)
+        user_profile.user = request.user
+        user_profile.save()
+        return redirect('Rango:index')
+    else:
+        print(form.errors)
+
+    context_dict = {'form': form}
+
+    return render(request, 'Rango/profile_registration.html', context_dict)
+
+
+@login_required
+def profile(request, username):
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return redirect('Rango:index')
+
+    userprofile = UserProfile.objects.get_or_create(user=user)[0]
+    print(userprofile)
+    form = UserProfileForm({'website': userprofile.website, 'picture': userprofile.picture})
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
+        if form.is_valid():
+            print(form.is_valid())
+            form.save()
+            return redirect('Rango:profile', user.username)
+    else:
+        print(form.errors)
+    return render(request, 'Rango/profile.html', {'userprofile': userprofile, 'selecteduser': user, 'form': form})
+
+@login_required
+def list_profiles(request):
+    userprofile_list = UserProfile.objects.all()
+    return render(request, 'rango/list_profiles.html', {'userprofile_list' : userprofile_list})
