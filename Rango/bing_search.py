@@ -27,14 +27,14 @@ def run_query(search_terms):
 
     query = urllib.quote(query)
 
-    search_url = "{0}/{1}?$format=json&query=%27{4}%27".format(
+    search_url = "{0}?q={4}".format(
         root_url,
         service,
         results_per_page,
         offset,
         query)
 
-    username = ''
+    username = 'Plocharski'
 
     password_mgr = urllib2.HTTPPasswordMgrWithDefaultRealm()
 
@@ -55,6 +55,7 @@ def run_query(search_terms):
         print('OK')
         json_response = json.loads(response)
         print('OK')
+        print(json_response)
         for result in json_response['d']['results']:
             results.append({'title': result['Title'],
                             'link': result['Url'],

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 {% extends 'Rango/base.html' %}
 {% load staticfiles %}
-<script src="{% static "js/rango-jquery.js" %}"></script>
 
 {% block title_block %}
     About
@@ -16,7 +15,8 @@
     </div>
     <button class="btn btn-primary" onClick="alert('You clicked the button using JavaScript.');">Click Me - I run JavaScript</button>
     <button class="btn btn-primary" id="about-btn">Click Me - I'm JavaScript on Speed</button>
-    <p>This is a example</p>
+    <p class=ouch >This is a example</p>
     <p>This is another example</p>
     <p>This text is for a JQuery Example</p>
+    <div id="msg"> Hello - I'm here for a JQuery Example too</div>
 {% endblock %}

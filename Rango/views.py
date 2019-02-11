@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 #from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
+from  django.utils.timezone import localdate
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -12,7 +13,14 @@ from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from bing_search import run_query
 
-
+def get_category_list(max_results=0, starts_with=''):
+    cat_list = []
+    if starts_with:
+        cat_list = Category.objects.filter(name__istartswith=starts_with)
+    if max_results > 0:
+        if len(cat_list) > max_results:
+            cat_list = cat_list[:max_results]
+    return cat_list
 
 def get_server_side_cookie(request, cookie, default_val=None):
     val = request.session.get(cookie)
@@ -58,6 +66,8 @@ def base(request):
 
 def show_category(request, category_name_slug):
     context_dict = {}
+    query = None
+
     try:
         category = Category.objects.get(slug=category_name_slug)
         pages = Page.objects.filter(category=category)
@@ -66,6 +76,14 @@ def show_category(request, category_name_slug):
     except Category.DoesNotExist:
         context_dict['category'] = None
         context_dict['pages'] = None
+
+    result_list = []
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+        if query:
+            result_list = run_query(query)
+    context_dict['result_list'] = result_list
+    return render(request, 'Rango/category.html', context_dict)
 
     return render(request, 'Rango/category.html', context_dict)
 
@@ -98,6 +116,7 @@ def add_page(request, category_name_slug):
                 page.category = category
                 page.views = 0
                 page.likes = 0
+                page.first_visit = datetime.now()
                 page.save()
                 return show_category(request, category_name_slug)
         else:
@@ -180,8 +199,8 @@ def search(request):
     result_list = []
     if request.method == 'POST':
         query = request.POST['query'].strip()
-    if query:
-        result_list = run_query(query)
+        if query:
+            result_list = run_query(query)
     return render(request, 'Rango/search.html', {'result_list': result_list})
 
 def track_url(request):
@@ -190,6 +209,10 @@ def track_url(request):
         if 'page_id' in request.GET:
             page_id = request.GET['page_id']
     page = Page.objects.get(pk=page_id)
+    if page.first_visit == 0:
+        page.first_visit = localdate()
+    if (localdate()-page.last_visit).days >= 0:
+        page.last_visit = localdate()
     page.views += 1
     page.save()
     return redirect(page.url)
@@ -236,3 +259,26 @@ def profile(request, username):
 def list_profiles(request):
     userprofile_list = UserProfile.objects.all()
     return render(request, 'rango/list_profiles.html', {'userprofile_list' : userprofile_list})
+
+@login_required
+def like_category(request):
+    cat_id = None
+    if request.method == 'GET':
+        cat_id = request.GET['category_id']
+    likes = 0
+    if cat_id:
+        cat = Category.objects.get(id=int(cat_id))
+        if cat:
+            likes = cat.likes + 1
+            cat.likes = likes
+            cat.save()
+    return HttpResponse(likes)
+
+def suggest_category(request):
+    cat_list = []
+    starts_with = ''
+    if request.method == 'GET':
+        starts_with = request.GET['suggestion']
+    cat_list = get_category_list(8, starts_with)
+
+    return render(request, 'Rango/cats.html', {'cats': cat_list })
